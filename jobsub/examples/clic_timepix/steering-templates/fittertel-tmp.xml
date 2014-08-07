@@ -329,21 +329,18 @@
    
 <processor name="APIXTbTrack" type="EUTelAPIXTbTrackTuple">
     <parameter name="OutputPath" type ="string" value="@HistogramPath@/tbtrack@RunNumber@.root"/>
+   
     <!--Name of the input Track collection-->
-    <parameter name="InputCollectionName" type="string" lcioInType="Track"> track </parameter>
+    <parameter name="InputTrackCollectionName" type="string" lcioInType="Track"> track </parameter>
+    
     <!--Name of the input cluster collections-->
     <parameter name="InputTrackerHitCollectionName" type="string" value="alignedHit"/>  
-    <parameter name="InputDutPulseCollectionName" type="string" value="cluster_timepix"/>
-    <parameter name="InputTelPulseCollectionName" type="string" value="cluster_m26"/>
+    
     <!--Name of the zs hit collection-->
-    <parameter name="TelZsColName" type="string" value="zsdata_m26"/>
     <parameter name="DutZsColName" type="string" value="zsdata_timepix"/>
+    
     <!-- Alignment constants-->
-    <parameter name="AlignmentCollectionNames"> prealign alignment  </parameter>
-    <parameter name="DoScales" type="bool" value="false"/>
-    <parameter name="ReferenceCollection" type="string" > refhit </parameter>
-    <parameter name="ApplyToReferenceCollection" type="bool" value="1"/>
-    <parameter name="doReverseAlign" type="bool" value="true"/>    
+    <parameter name="DUTIDs" type="int" > 6 </parameter>
 
 </processor>
 
