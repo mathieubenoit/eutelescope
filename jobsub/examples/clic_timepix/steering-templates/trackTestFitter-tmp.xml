@@ -74,8 +74,6 @@
   <parameter name="SimpleFileHandler" type="StringVec"> refhit42 @DatabasePath@/@FilePrefix@-referencehit.slcio referenceHit </parameter>
   <parameter name="SimpleFileHandler" type="StringVec"> refhit51 @DatabasePath@/@FilePrefix@-referencehit.slcio referenceHit </parameter>
   <parameter name="SimpleFileHandler" type="StringVec"> refhit52 @DatabasePath@/@FilePrefix@-referencehit.slcio referenceHit </parameter>
-  <parameter name="SimpleFileHandler" type="StringVec"> refhit61 @DatabasePath@/@FilePrefix@-referencehit.slcio referenceHit </parameter>
-  <parameter name="SimpleFileHandler" type="StringVec"> refhit62 @DatabasePath@/@FilePrefix@-referencehit.slcio referenceHit </parameter>  
   <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
   <!--parameter name="Verbosity" type="string" value=""/-->
 </processor>
@@ -270,11 +268,11 @@
   <!--reference hit collection name -->
   <parameter name="ReferenceCollection" type="string" value="refhit"/>
   <!--X resolution parameter for each plane. Note: these numbers are ordered according to the z position of the sensors and NOT according to the sensor id.-->
-  <!--parameter name="ResolutionX" type="FloatVec"> 10 10 10 10 10 10 10</parameter-->
+  <!--parameter name="ResolutionX" type="FloatVec"> 10 10 10 10 10 10 </parameter-->
   <!--Y resolution parameter for each plane. Note: these numbers are ordered according to the z position of the sensors and NOT according to the sensor id.-->
-  <!--parameter name="ResolutionY" type="FloatVec"> 10 10 10 10 10 10 10</parameter-->
+  <!--parameter name="ResolutionY" type="FloatVec"> 10 10 10 10 10 10 </parameter-->
   <!--Z resolution parameter for each plane. Note: these numbers are ordered according to the z position of the sensors and NOT according to the sensor id.-->
-  <!--parameter name="ResolutionZ" type="FloatVec"> 10 10 10 10 10 10 10</parameter-->
+  <!--parameter name="ResolutionZ" type="FloatVec"> 10 10 10 10 10 10 </parameter-->
   <!--Flag for searching multiple tracks in events with multiple hits-->
   <parameter name="SearchMultipleTracks" type="bool" value="true"/>
   <!--Chi2 penalty for removing hit from the track-->
@@ -353,16 +351,6 @@
     <parameter name="OutputTrackCollectionName" type="string" lcioOutType="Track"> track5 </parameter>
     <parameter name="PassiveLayerIDs" type="IntVec">5</parameter>
   </processor>
-  
-  <processor name="Fitter06" type="EUTelTestFitter">
-    <parameter name="CorrectedHitCollectionName" type="string" lcioOutType="TrackerHit"> corrhits6 </parameter>
-    <parameter name="OutputHitCollectionName" type="string" lcioOutType="TrackerHit"> fithits6 </parameter>
-    <parameter name="OutputTrackCollectionName" type="string" lcioOutType="Track"> track6 </parameter>
-    <parameter name="PassiveLayerIDs" type="IntVec">6</parameter>
-  </processor>
-  
-  
-  
 </group>
 
 
@@ -451,13 +439,6 @@
     <parameter name="hitCollectionNames" type="StringVec"> gearfithits5 prealignedfithits5 </parameter>
     <parameter name="refhitCollectionNames" type="StringVec"> refhit52 refhit51 </parameter>
   </processor>
-  
-  <processor name="ApplyAlignmentFitHits06" type="EUTelApplyAlignmentProcessor">
-    <parameter name="InputHitCollectionName" type="StringVec" lcioInType="TrackerHit"> fithits6 alignedHit </parameter>
-    <parameter name="hitCollectionNames" type="StringVec"> gearfithits6 prealignedfithits6 </parameter>
-    <parameter name="refhitCollectionNames" type="StringVec"> refhit62 refhit61 </parameter>
-  </processor>
-  
 </group>
 
 
@@ -539,15 +520,6 @@
     <parameter name="ManualDUTid" type="int" value="5"/>
     <parameter name="ReferenceCollection" type="string"> refhit52 refhit </parameter>
   </processor>
-  
-  <processor name="DUTHisto06" type="EUTelDUTHistograms">
-    <parameter name="InputFitHitCollectionName" type="string" lcioInType="TrackerHit"> gearfithits6 </parameter>
-    <parameter name="InputTrackCollectionName" type="StringVec" lcioInType="Track"> track6 track </parameter>
-    <parameter name="ManualDUTid" type="int" value="6"/>
-    <parameter name="ReferenceCollection" type="string"> refhit62 refhit </parameter>
-  </processor>
-  
-  
 </group>
 
 

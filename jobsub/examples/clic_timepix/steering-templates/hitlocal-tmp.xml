@@ -17,17 +17,14 @@
 
    <execute>
       <processor name="AIDA"/>
-      <processor name="LoadRefHitDB"/>
       <processor name="HitMakerM26"/>
-      <processor name="HitMakerTP"/>
-      <processor name="PreAligner"/>
       <processor name="Correlator"/>
       <processor name="Save"/>
       <processor name="MyEUTelUtilityPrintEventNumber"/>
    </execute>
 
    <global>
-      <parameter name="LCIOInputFiles"> @LcioPath@/@FilePrefix@-clustering.slcio </parameter>
+      <parameter name="LCIOInputFiles"> @LcioPath@/@FilePrefix@-clustering-filtered.slcio </parameter>
       <parameter name="GearXMLFile" value="@GearFilePath@/@GearFile@"/>
       <parameter name="MaxRecordNumber" value="@MaxRecordNumber@"/>
       <parameter name="SkipNEvents" value="@SkipNEvents@"/>
@@ -40,33 +37,18 @@
   <!-- compression of output file 0: false >0: true (default) -->
   <parameter name="Compress" type="int" value="1"/>
   <!-- filename without extension-->
-  <parameter name="FileName" type="string" value="@HistogramPath@/@FilePrefix@-hitmaker"/>
+  <parameter name="FileName" type="string" value="@HistogramPath@/@FilePrefix@-hitlocal"/>
   <!-- type of output file root (default) or xml )-->
   <parameter name="FileType" type="string" value="root"/>
   <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
   <!--parameter name="Verbosity" type="string" value=""/-->
 </processor>
 
-<processor name="LoadRefHitDB" type="ConditionsProcessor">
- <!--ConditionsProcessor provides access to conditions data  transparently from LCIO files or a databases, using LCCD-->
-  <!--Initialization of a conditions database handler-->
-  <!--parameter name="DBCondHandler" type="StringVec"> conditionsName /lccd/myfolder HEAD </parameter-->
-  <!--Initialization of a conditions db file handler-->
-  <!--parameter name="DBFileHandler" type="StringVec"> conditionsName conditions.slcio collectionName </parameter-->
-  <!--Initialization string for conditions database-->
-  <parameter name="DBInit" type="string" value="localhost:lccd_test:align:tel"/>
-  <!--Initialization of a data file handler-->
-  <!--parameter name="DataFileHandler" type="StringVec" value="conditionsName"/-->
-  <!--Initialization of a simple conditions file handler-->
-  <parameter name="SimpleFileHandler" type="StringVec"> refhit @DatabasePath@/@FilePrefix@-referencehit.slcio referenceHit </parameter>
-  <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-  <!--parameter name="Verbosity" type="string" value=""/-->
-</processor>
 
  <processor name="HitMakerM26" type="EUTelProcessorHitMaker">
  <!--EUTelHitMaker is responsible to translate cluster centers from the local frame of reference to the external frame of reference using the GEAR geometry description-->
   <!--Cluster (pulse) collection name-->
-  <parameter name="PulseCollectionName" type="string" lcioInType="TrackerPulse"> cluster_m26_free </parameter>
+  <parameter name="PulseCollectionName" type="string" lcioInType="TrackerPulse"> filtered_cluster_m26 </parameter>
   <!--Hit collection name-->
   <parameter name="HitCollectionName" type="string" lcioOutType="TrackerHit"> hit </parameter>
   <!--Select here how the center of gravity should be calculated.
@@ -77,7 +59,7 @@ NxMPixel: using a subframe of the cluster N x M pixels wide (set NxMPixel too).-
   <!--If true a 3D histo will be filled. It may require large memory-->
   <parameter name="Enable3DHisto" type="bool" value="false"/>
   <!--Hit coordinates are calculated in local reference frame of sensor-->
-  <!--parameter name="EnableLocalCoordidates" type="bool" value="false"/-->
+  <parameter name="EnableLocalCoordidates" type="bool" value="true"/>
   <!--The name of the collections containing the eta function (x and y respectively)-->
   <!--parameter name="EtaCollectionName" type="StringVec"> xEta yEta </parameter-->
   <!--Enable or disable eta correction-->
@@ -98,74 +80,6 @@ NxMPixel: using a subframe of the cluster N x M pixels wide (set NxMPixel too).-
   <!--parameter name="Verbosity" type="string" value=""/-->
 </processor>
 
-
- <processor name="HitMakerTP" type="EUTelProcessorHitMaker">
- <!--EUTelHitMaker is responsible to translate cluster centers from the local frame of reference to the external frame of reference using the GEAR geometry description-->
-  <!--Cluster (pulse) collection name-->
-  <parameter name="PulseCollectionName" type="string" lcioInType="TrackerPulse"> cluster_tp_free </parameter>
-  <!--Hit collection name-->
-  <parameter name="HitCollectionName" type="string" lcioOutType="TrackerHit"> hit </parameter>
-  <!--Select here how the center of gravity should be calculated.
-FULL: using the full cluster
-NPixel: using only the first N most significant pixels (set NPixel too)
-NxMPixel: using a subframe of the cluster N x M pixels wide (set NxMPixel too).-->
-  <parameter name="CoGAlgorithm" type="string" value="FULL"/>
-  <!--If true a 3D histo will be filled. It may require large memory-->
-  <parameter name="Enable3DHisto" type="bool" value="false"/>
-  <!--Hit coordinates are calculated in local reference frame of sensor-->
-  <!--parameter name="EnableLocalCoordidates" type="bool" value="false"/-->
-  <!--The name of the collections containing the eta function (x and y respectively)-->
-  <!--parameter name="EtaCollectionName" type="StringVec"> xEta yEta </parameter-->
-  <!--Enable or disable eta correction-->
-  <parameter name="EtaSwitch" type="bool" value="false"/>
-  <!--The number of most significant pixels to be used if CoGAlgorithm is "NPixel"-->
-  <!--parameter name="NPixel" type="int" value="9"/-->
-  <!--The submatrix size to be used for CoGAlgorithm = "NxMPixel"-->
-  <parameter name="NxMPixel" type="IntVec"> 3 3 </parameter>
-  <!--This is the name of the preAligment collection determined from hit correlations and stored in the offset db file.-->
-  <!--parameter name="OffsetCollection" type="string" value="preAlignment"/-->
-  <!--This is the name of the LCIO file name with the output offset db (add .slcio)-->
-  <!--parameter name="OffsetDBFile" type="string" value="offset-db.slcio"/-->
-  <!--This is the name of the reference hit collection initialized in this processor. This collection provides the reference vector to correctly determine a plane corresponding to a global hit coordiante.-->
-  <!--parameter name="ReferenceCollection" type="string" value="referenceHit"/-->
-  <!--This is the file where the reference hit collection is stored-->
-  <parameter name="ReferenceHitFile" type="string" value="@DatabasePath@/@FilePrefix@-referencehit.slcio"/>
-  <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-  <!--parameter name="Verbosity" type="string" value=""/-->
-</processor>
-
- <processor name="PreAligner" type="EUTelPreAlign">
- <!--Apply alignment constants to hit collection-->
-  <!--The name of the input hit collection-->
-  <parameter name="InputHitCollectionName" type="string" lcioInType="TrackerHit"> hit </parameter>
-  <!--Name of LCIO db file where alignment constantds will be stored-->
-  <parameter name="AlignmentConstantLCIOFile" type="string" value="@DatabasePath@/@FilePrefix@-prealignment.slcio"/>
-  <!--How many events should be used for an approximation to the X,Y shifts (pre-alignment)? (default=50000)-->
-  <parameter name="Events" type="int" value="15000"/>
-  <!--SensorID of fixed plane-->
-  <!--parameter name="FixedPlane" type="int" value="0"/-->
-  <!--Switch on or off the histogram filling-->
-  <!--parameter name="HistogramFilling" type="bool" value="true"/-->
-  <!--This is the name of the hot pixel collection that clusters should be checked against (optional). -->
-  <parameter name="HotPixelCollectionName" type="string" value="hotpixel"/>
-  <!--If there are more then this number of correlated hits (planes->track candidate) (default=5)-->
-  <parameter name="MinNumberOfCorrelatedHits" type="int" value="5"/>
-  <!--reference hit collection name -->
-  <parameter name="ReferenceCollection" type="string" value="refhit"/>
-  <!--Maximal values of the hit residuals in the X direction for a correlation band. Note: these numbers are ordered according to the z position of the sensors and NOT according to the sensor id.-->
-  <parameter name="ResidualsXMax" type="FloatVec"> 2. 2. 2. 8. 2. 2. 2 </parameter>
-  <!--Minimal values of the hit residuals in the X direction for a correlation band. Note: these numbers are ordered according to the z position of the sensors and NOT according to the sensor id.-->
-  <parameter name="ResidualsXMin" type="FloatVec"> -2. -2. -2. -8. -2. -2. -2 </parameter>
-  <!--Maximal values of the hit residuals in the Y direction for a correlation band. Note: these numbers are ordered according to the z position of the sensors and NOT according to the sensor id.-->
-  <parameter name="ResidualsYMax" type="FloatVec"> 2. 2. 2. 8. 2. 2. 2 </parameter>
-  <!--Minimal values of the hit residuals in the Y direction for a correlation band. Note: these numbers are ordered according to the z position of the sensors and NOT according to the sensor id.-->
-  <parameter name="ResidualsYMin" type="FloatVec"> -2. -2. -2. -8. -2. -2. -2 </parameter>
-   <!--Do you want the reference hit collection to be used for coordinate transformations?-->
-  <!--parameter name="UseReferenceCollection" type="bool" value="true"/-->
-  <parameter name="ReferenceCollection" type="string" > refhit </parameter>
-  <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-  <!--parameter name="Verbosity" type="string" value=""/-->
-</processor>
 
  <processor name="Correlator" type="EUTelCorrelator">
  <!--EUTelCorrelator fills histograms with correlation plots-->
@@ -176,7 +90,7 @@ NxMPixel: using a subframe of the cluster N x M pixels wide (set NxMPixel too).-
   <!--Dump the offset X and Y values calculated from the correlation bands (default = true)-->
   <parameter name="DumpOffset" type="bool" value="false"/>
   <!--How many events are needed to get reasonable correlation plots (and Offset DB)? (default=1000)-->
-  <parameter name="Events" type="int" value="15000"/>
+  <parameter name="Events" type="int" value="9999"/>
   <!--Name of histogram info xml file-->
   <parameter name="HistogramInfoFilename" type="string"> @HistoInfoFile@ </parameter>
   <!--SensorID of fixed plane-->
@@ -192,16 +106,16 @@ NxMPixel: using a subframe of the cluster N x M pixels wide (set NxMPixel too).-
   <!--reference hit collection name -->
   <parameter name="ReferenceCollection" type="string" value="refhit"/>
   <!--Maximal values of the hit residuals in the X direction for a correlation band. Note: these numbers are ordered according to the z position of the sensors and NOT according to the sensor id.-->
-   <parameter name="ResidualsXMax" type="FloatVec"> 2. 2. 2. 5. 2. 2. 2 </parameter>
+  <parameter name="ResidualsXMax" type="FloatVec"> 2. 2. 2. 2. 2. 2. </parameter>
   <!--Minimal values of the hit residuals in the X direction for a correlation band. Note: these numbers are ordered according to the z position of the sensors and NOT according to the sensor id.-->
-  <parameter name="ResidualsXMin" type="FloatVec"> -2. -2. -2. -5. -2. -2. -2 </parameter>
+  <parameter name="ResidualsXMin" type="FloatVec"> -2. -2. -2. -2. -2. -2. </parameter>
   <!--Maximal values of the hit residuals in the Y direction for a correlation band. Note: these numbers are ordered according to the z position of the sensors and NOT according to the sensor id.-->
-  <parameter name="ResidualsYMax" type="FloatVec"> 2. 2. 2. 5. 2. 2. 2 </parameter>
+  <parameter name="ResidualsYMax" type="FloatVec"> 2. 2. 2. 2. 2. 2. </parameter>
   <!--Minimal values of the hit residuals in the Y direction for a correlation band. Note: these numbers are ordered according to the z position of the sensors and NOT according to the sensor id.-->
-  <parameter name="ResidualsYMin" type="FloatVec"> -2. -2. -2. -5. -2. -2. -2 </parameter>
+  <parameter name="ResidualsYMin" type="FloatVec"> -2. -2. -2. -2. -2. -2. </parameter>
   <!--Do you want the reference hit collection to be used for coordinate transformations?-->
   <!--parameter name="UseReferenceCollection" type="bool" value="true"/-->
-  <parameter name="ReferenceCollection" type="string" > refhit </parameter>
+  <!-- parameter name="ReferenceCollection" type="string" > refhit </parameter -->
   <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
   <!--parameter name="Verbosity" type="string" value=""/-->
 </processor>
@@ -217,7 +131,7 @@ NxMPixel: using a subframe of the cluster N x M pixels wide (set NxMPixel too).-
   <!--force keep of the named collections - overrules DropCollectionTypes (and DropCollectionNames)-->
   <!--parameter name="KeepCollectionNames" type="StringVec" value="MyPreciousSimTrackerHits"/-->
   <!-- name of output file -->
-  <parameter name="LCIOOutputFile" type="string" value="@LcioPath@/@FilePrefix@-hitmaker.slcio"/>
+  <parameter name="LCIOOutputFile" type="string" value="@LcioPath@/@FilePrefix@-hitlocal.slcio"/>
   <!--write mode for output file:  WRITE_APPEND or WRITE_NEW-->
   <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
   <!--Set it to true to remove intermediate EORE in merged runs-->
@@ -231,7 +145,7 @@ NxMPixel: using a subframe of the cluster N x M pixels wide (set NxMPixel too).-
  <processor name="MyEUTelUtilityPrintEventNumber" type="EUTelUtilityPrintEventNumber">
  <!--EUTelUtilityPrintEventNumber prints event number to screen depending on the verbosity level-->
   <!--Print event number for every n-th event-->
-  <parameter name="EveryNEvents" type="int" value="2500"/>
+  <parameter name="EveryNEvents" type="int" value="1000"/>
   <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
   <!--parameter name="Verbosity" type="string" value=""/-->
   <!--print the event timestamp as read from LCIO-->
