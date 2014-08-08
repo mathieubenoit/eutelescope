@@ -148,6 +148,8 @@ void EUTelAPIXTbTrackTuple::processRunHeader( LCRunHeader* runHeader)
 	
 	// Decode and print out Run Header information - just a check
 	_runNr = runHeader->getRunNumber();
+
+
 }
 
 void EUTelAPIXTbTrackTuple::processEvent( LCEvent * event )
@@ -181,7 +183,7 @@ void EUTelAPIXTbTrackTuple::processEvent( LCEvent * event )
 	{ 
 		return; 
 	}
-  
+ 
   	//read in tracks
 	if(!readTracks(event))
        	{
@@ -194,6 +196,7 @@ void EUTelAPIXTbTrackTuple::processEvent( LCEvent * event )
 	_euhits->Fill();
 
 	_isFirstEvent = false;
+
 }
 
 void EUTelAPIXTbTrackTuple::end()
@@ -267,6 +270,8 @@ bool EUTelAPIXTbTrackTuple::readTracks(LCEvent* event)
 	UTIL::CellIDDecoder<TrackerHitImpl>  hitCellDecoder( EUTELESCOPE::HITENCODING );
 
 	int nTrackParams=0;
+
+
 	for(int itrack=0; itrack< trackCol->getNumberOfElements(); itrack++)
        	{
 		lcio::Track* fittrack = dynamic_cast<lcio::Track*>( trackCol->getElementAt(itrack) ) ;
@@ -289,7 +294,7 @@ bool EUTelAPIXTbTrackTuple::readTracks(LCEvent* event)
 
      			UTIL::CellIDDecoder<TrackerHitImpl> hitDecoder ( EUTELESCOPE::HITENCODING );
       			int sensorID = hitDecoder(fittedHit)["sensorID"];
-	  		double nominalZpos = _siPlanesLayerLayout->getSensitivePositionZ(ihit);
+	  		double nominalZpos = 0;
 
 			//Dump the (fitted) hits for the DUTs
 			if( std::find( _DUTIDs.begin(), _DUTIDs.end(), sensorID) == _DUTIDs.end() )
@@ -418,7 +423,14 @@ void EUTelAPIXTbTrackTuple::prepareTree()
 	_rotXY = new vector<double>();
 	_rotZX = new vector<double>();
 	_rotZY = new vector<double>();
+	_rotXYerr = new vector<double>();
+	_rotZXerr = new vector<double>();
+	_rotZYerr = new vector<double>();
+	_alpha = new vector<double>();
+	_beta = new vector<double>();
+	_gamma = new vector<double>();
 	
+			
 	_euhits = new TTree("fitpoints","fitpoints");
 	_euhits->Branch("nHits", &_nHits);
 	_euhits->Branch("xPos", &_hitXPos);
@@ -468,6 +480,7 @@ void EUTelAPIXTbTrackTuple::prepareTree()
 	_versionVec = new TVectorD(1);
 	_versionVec[0] = 1.1;
         _versionVec->Write("ver");
+	
 }
 
 

@@ -101,7 +101,19 @@ namespace eutelescope {
     std::vector<double> *_hitYPos;
     std::vector<double> *_hitZPos;
     std::vector<int>    *_hitSensorId;
-
+    
+    TTree* _rottree;
+    std::vector<int> *_rotDUTId;  
+    std::vector<double> *_alpha;
+    std::vector<double> *_beta; 
+    std::vector<double> *_gamma;  
+    std::vector<double> *_rotZY;
+    std::vector<double> *_rotZX; 
+    std::vector<double> *_rotXY;
+    std::vector<double> *_rotZYerr;
+    std::vector<double> *_rotZXerr; 
+    std::vector<double> *_rotXYerr;     
+    
     TVectorD* _versionVec;
     
     
@@ -127,19 +139,6 @@ namespace eutelescope {
 
     gear::SiPlanesParameters * _siPlanesParameters;
     gear::SiPlanesLayerLayout * _siPlanesLayerLayout;
-
-    TTree* _rottree;
-    std::vector<int> *_rotDUTId;  
-    std::vector<double> *_alpha;
-    std::vector<double> *_beta; 
-    std::vector<double> *_gamma;  
-    std::vector<double> *_rotZY;
-    std::vector<double> *_rotZX; 
-    std::vector<double> *_rotXY;
-    std::vector<double> *_rotZYerr;
-    std::vector<double> *_rotZXerr; 
-    std::vector<double> *_rotXYerr;     
-    
   };
 
   //! A global instance of the processor.
