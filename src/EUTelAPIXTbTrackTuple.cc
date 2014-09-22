@@ -377,7 +377,7 @@ void EUTelAPIXTbTrackTuple::prepareTree()
 	_euhits->Branch("zPos", &_hitZPos);
 	_euhits->Branch("sensorId", &_hitSensorId);
 
-	_zstree = new TTree("rawdata", "rawdata");
+	_zstree = new TTree("zspix", "zspix");
 	_zstree->SetAutoSave(1000000000);
 	_zstree->Branch("nPixHits", &_nPixHits);
 	_zstree->Branch("euEvt",    &_nEvt);
@@ -388,7 +388,7 @@ void EUTelAPIXTbTrackTuple::prepareTree()
 	_zstree->Branch("iden",     &p_iden);
 
 	//Tree for storing all track param info
-	_eutracks = new TTree("tracks", "tracks");
+	_eutracks = new TTree("eutracks", "eutracks");
 	_eutracks->SetAutoSave(1000000000);
 	_eutracks->Branch("nTrackParams", &_nTrackParams);
 	_eutracks->Branch("euEvt", &_nEvt);
