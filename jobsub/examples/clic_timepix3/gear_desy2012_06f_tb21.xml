@@ -71,7 +71,7 @@
 	<layer>
           <ladder         ID="6"
                           positionX="0.0"        positionY="0.0"        positionZ="335.05"
-                          rotationZY="0.00"       rotationZX="0.0"        rotationXY="0.0" 
+                          rotationZY="0.00"       rotationZX="0.0"        rotationXY="180.0" 
                           sizeX="14.08"            sizeY="14.08"            thickness="1.567"
                           radLength="93.660734"
                           />
