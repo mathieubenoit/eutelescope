@@ -91,16 +91,16 @@ public:
 protected:
      
     //! The x coordinate
-    short _xCoord;
+    unsigned short _xCoord;
     
     //! The y coordinate
-    short _yCoord;
+    unsigned short _yCoord;
 
     //! The signal
-    short _signal;
+    unsigned short _signal;
 
 	//! The time
-    short _time;
+    unsigned short _time;
 
 };
 

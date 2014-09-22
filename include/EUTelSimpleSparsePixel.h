@@ -96,7 +96,7 @@ namespace eutelescope {
     short _yCoord;
 
     //! The signal
-    short _signal;
+    int _signal;
 
   };
 }
