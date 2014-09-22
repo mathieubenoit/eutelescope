@@ -20,15 +20,13 @@ Version: $Id: clusearch-tmp.xml,v 1.9 2009-08-01 10:41:44 bulgheroni Exp $
 
   <execute>
     <processor name="AIDA"/>
-      <processor name="Mimosa26EUTelAutoPedestalNoiseProcessor"/>
+      <processor name="TPLoadHotPixelDB"/> 
       <processor name="LoadHotPixelDB"/>
-      <processor name="TimepixEUTelAutoPedestalNoiseProcessor"/>
-      <processor name="TPLoadHotPixelDB"/>      
+      <processor name="Mimosa26EUTelAutoPedestalNoiseProcessor"/>
+      <processor name="TimepixEUTelAutoPedestalNoiseProcessor"/>       
       <processor name="Clustering"/>
       <processor name="TPClustering"/>
       <--processor name="Correlator"/>
-      <processor name="MyEUTelUtilityPrintEventNumber"/>
-
     <processor name="Save"/>
   </execute>
 
@@ -134,7 +132,7 @@ Version: $Id: clusearch-tmp.xml,v 1.9 2009-08-01 10:41:44 bulgheroni Exp $
     <!--parameter name="DataFileHandler" type="StringVec" value="conditionsName"/-->
     <!--Initialization of a simple conditions file handler-->
     <!-- suppress only the Mimosa26 pixels --> 
-    <parameter name="SimpleFileHandler" type="StringVec"> hotpixel_tp  @DBPath@/run@RunNumber@-hotpixel-tp.slcio hotpixel_tp </parameter>
+    <parameter name="SimpleFileHandler" type="StringVec"> hotpixel_tp  @DBPath@/run@HotPixelRunNumber@-hotpixel-tp-db.slcio hotpixel_tp </parameter>
   </processor>
 
 
@@ -215,7 +213,7 @@ Version: $Id: clusearch-tmp.xml,v 1.9 2009-08-01 10:41:44 bulgheroni Exp $
         HISTOGRAMMING
     -->
     <!--Switch on or off the histogram filling-->
-    <parameter name="HistogramFilling" type="bool" value="true"/>
+    <parameter name="HistogramFilling" type="bool" value="false"/>
     <!--This is the name of the histogram information file-->
     <parameter name="HistoInfoFileName" type="string" value="@HistoInfoPath@/@HistoInfo@"/>
     <!--The list of cluster N to be filled.For example 7 means filling the cluster spectra with the 7 most significant pixels-->
@@ -276,6 +274,11 @@ Version: $Id: clusearch-tmp.xml,v 1.9 2009-08-01 10:41:44 bulgheroni Exp $
     <!--Maximum allowed cluster size along y (only odd numbers)-->
     <parameter name="FFClusterSizeY" type="int" value="5"/>
 
+
+
+    <!--Maximum Charge per cluster-->
+    <parameter name="EmaxCut" type="float" value="5000"/>
+
     <!--
         SPARSECLUSTER and SPARSECLUSTER2 (use with care!)
         
@@ -302,41 +305,13 @@ Version: $Id: clusearch-tmp.xml,v 1.9 2009-08-01 10:41:44 bulgheroni Exp $
     <!--This is the name of the histogram information file-->
     <parameter name="HistoInfoFileName" type="string" value="@HistoInfoPath@/@HistoInfo@"/>
     <!--The list of cluster N to be filled.For example 7 means filling the cluster spectra with the 7 most significant pixels-->
-    <parameter name="ClusterN" type="IntVec" value="4 6 8 9"/>
+    <parameter name="ClusterN" type="IntVec" value="1 2 3 4 5 6 8 9"/>
     <!--The list of cluster NxN to be filled.For example 3 means filling the 3x3 histogram spectrum-->
-    <parameter name="ClusterNxN" type="IntVec" value="3"/>
-    
-    <parameter name="EmaxCut" type="float" value="5000"/>
-
+    <parameter name="ClusterNxN" type="IntVec" value="1 2 3 4 5 6"/>
 
   </processor>
   
   
-  <processor name="HotPixelKiller" type="EUTelHotPixelKiller">
-    <!--EUTelHotPixelKiller periodically check for pixel singing loud too often and remove them from the analysis-->
-    <!--Pixel status collection-->
-    <parameter name="StatusCollectionName" type="string" lcioInType="TrackerRawData"> m26_status </parameter>
-    <!--This float number [0,1] represents the maximum allowed firing frequency
-        within the selected number of event per cycle-->
-    <parameter name="MaxAllowedFiringFreq" type="float" value="0.01"/>
-    <!--The number of events to be considered for each update cycle-->
-    <parameter name="NoOfEventPerCycle" type="int" value="1000"/>
-    <!--The total number of hot pixel cycle-->
-  </processor>
-  
-  
-    <processor name="TPHotPixelKiller" type="EUTelHotPixelKiller">
-    <!--EUTelHotPixelKiller periodically check for pixel singing loud too often and remove them from the analysis-->
-    <!--Pixel status collection-->
-    <parameter name="StatusCollectionName" type="string" lcioInType="TrackerRawData"> tp_status </parameter>
-    <!--This float number [0,1] represents the maximum allowed firing frequency
-        within the selected number of event per cycle-->
-    <parameter name="MaxAllowedFiringFreq" type="float" value="0.01"/>
-    <!--The number of events to be considered for each update cycle-->
-    <parameter name="NoOfEventPerCycle" type="int" value="1000"/>
-    <!--The total number of hot pixel cycle-->
-    <parameter name="TotalNoOfCycle" type="int" value="0"/>
-  </processor>
 
   <processor name="Correlator" type="EUTelCorrelator">
     <!--EUTelCorrelator fills histograms with correlation plots-->
@@ -347,22 +322,12 @@ Version: $Id: clusearch-tmp.xml,v 1.9 2009-08-01 10:41:44 bulgheroni Exp $
     <!-- -->
     <parameter name="HotPixelCollectionName" type="string" lcioInType="TrackerHit"> hotpixel_m26 </parameter>
     <!-- -->
-    <parameter name="ClusterChargeMinimum" type="int" value="1"/>
+    <parameter name="ClusterChargeMinimum" type="int" value="2"/>
     <!-- -->
     <parameter name="Events" type="int" value="1000000"/>
     <!-- -->
     <parameter name="OffsetDBFile" type="string"> @DBPath@/run@RunNumber@-offset-db.slcio </parameter>
  </processor>
-
-<processor name="MyEUTelUtilityPrintEventNumber" type="EUTelUtilityPrintEventNumber">
- <!--EUTelUtilityPrintEventNumber prints event number to screen depending on the verbosity level-->
-  <!--Print event number for every n-th event-->
-  <parameter name="EveryNEvents" type="int" value="1000"/>
-  <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-  <!--parameter name="Verbosity" type="string" value=""/-->
-  <!--print the event timestamp as read from LCIO-->
-  <!--parameter name="printTimestamp" type="bool" value="false"/-->
-</processor>
 
 
   <processor name="Save" type="EUTelOutputProcessor">

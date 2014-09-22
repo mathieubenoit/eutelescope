@@ -20,16 +20,14 @@ Version: $Id: hitmaker-tmp.xml,v 1.3 2009-06-04 17:19:01 bulgheroni Exp $
    <execute>
       <processor name="AIDA"/>
       <processor name="LoadHotPixelDB"/>
-      <--processor name="TPLoadHotPixelDB"/>      
+      <processor name="TPLoadHotPixelDB"/>      
       <!--processor name="Mimosa26EUTelAutoPedestalNoiseProcessor"-->
       <!-- processor name="GeoSelection"/ -->
-      <--processor name="LoadRefHitDB"/-->
+      <processor name="LoadRefHitDB"/>
       <processor name="HitMakerM26"/>
       <processor name="HitMakerTP"/>
-      <--processor name="PreAligner"/> 
-      <--processor name="Correlator"/> 
-      <processor name="MyEUTelUtilityPrintEventNumber"/>
-
+      <processor name="PreAligner"/> 
+      <processor name="Correlator"/> 
       <processor name="Save"/>
    </execute>
 
@@ -87,7 +85,7 @@ Version: $Id: hitmaker-tmp.xml,v 1.3 2009-06-04 17:19:01 bulgheroni Exp $
     <!--Initialization of a data file handler-->
     <!--parameter name="DataFileHandler" type="StringVec" value="conditionsName"/-->
     <!--Initialization of a simple conditions file handler-->
-    <parameter name="SimpleFileHandler" type="StringVec"> hotpixel_tp  @DBPath@/run@RunNumber@-hotpixel-db.slcio hotpixel_tp  </parameter>
+    <parameter name="SimpleFileHandler" type="StringVec"> hotpixel_tp  @DBPath@/@Output@-hotpixel-tp-db.slcio hotpixel_tp  </parameter>
   </processor>
 
  <processor name="Mimosa26EUTelAutoPedestalNoiseProcessor" type="EUTelAutoPedestalNoiseProcessor">
@@ -189,14 +187,75 @@ NxMPixel: using a subframe of the cluster N x M pixels wide (set NxMPixel too).-
   <!-- <parameter name="SplitFileSizekB" type="int" value="1000000"/> DP -->
 </processor>
 
-<processor name="MyEUTelUtilityPrintEventNumber" type="EUTelUtilityPrintEventNumber">
- <!--EUTelUtilityPrintEventNumber prints event number to screen depending on the verbosity level-->
-  <!--Print event number for every n-th event-->
-  <parameter name="EveryNEvents" type="int" value="1000"/>
-  <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-  <!--parameter name="Verbosity" type="string" value=""/-->
-  <!--print the event timestamp as read from LCIO-->
-  <!--parameter name="printTimestamp" type="bool" value="false"/-->
+ <processor name="GeoSelection" type="EUTelClusterFilter">
+ <!--EUTelClusterFilter is a very powerful tool. It allows to select among an input collection of TrackerPulse
+only the clusters fulfilling a certain set of selection criteria.
+The user can modify the switch on and off each selection cut and set the proper value for that via the processor parameter.-->
+  <!--This is the input Tracker Pulse collection that should be filtered-->
+  <parameter name="InputPulseCollectionName" type="string" lcioInType="TrackerPulse"> cluster_m26 </parameter>
+  <!--This is the output Tracker Pulse collection containing the filtered clusters-->
+  <parameter name="OutputPulseCollectionName" type="string" lcioOutType="TrackerPulse"> refilteredcluster </parameter>
+  <!--This is the minimum allowed total charge in to a cluster.
+One floating point number for each sensor in the telescope-->
+  <parameter name="ClusterMinTotalCharge" type="FloatVec"> 0 0 0 0 0 0  0 0 0</parameter>
+  <!--This is the minimum charge that a cluster of N pixels has to have.
+The first figure has to be the number of pixels to consider in the cluster, 
+then one float number for each sensor.-->
+  <parameter name="ClusterNMinCharge" type="FloatVec"> 0 0 0 0 0 0   0 0 0</parameter>
+  <!--This is the minimum SNR that a cluster of N pixels has to have.
+The first figure has to be the number of pixels to consider in the cluster, 
+then one float number for each sensor. Setting N = 0 is enough to disable the cut.-->
+  <parameter name="ClusterNMinSNR" type="FloatVec"> 0 0 0 0 0 0  0 0 0 </parameter>
+  <!--This is the minimum charge that a cluster of N times N pixels has to have.
+The first figure is the subcluster size in pixels (odd number), then one floating number for each 
+planes. To switch this selection off, set all numbers to zero.-->
+  <parameter name="ClusterNxNMinCharge" type="FloatVec"> 0 0 0 0 0 0  0 0 0 </parameter>
+  <!--This is the minimum SNR that a cluster of N times N pixels has to have.
+The first figure is the subcluster size in pixels (odd number), then one floating number for each 
+planes. To switch this selection off, set at least the first number to zero.-->
+  <parameter name="ClusterNxNMinSNR" type="FloatVec"> 0 0 0 0 0 0  0 0 0 </parameter>
+  <!--This is the required quality for the cluster.
+One integer number for each detector according to ClusterQuality.
+Put a negative number to disable the cut-->
+  <parameter name="ClusterQuality" type="IntVec"> -1 -1 -1 -1 -1 -1   -1 -1 -1</parameter>
+  <!--Define here ROI's. The first number (integer) is the detector ID.
+The other four float are xBotLeft  yBotLeft xTopRight yTopRight.
+To disable it, just put a negative number as detector ID.-->
+  <parameter name="InsideRegion" type="FloatVec"> -1 260 260 500 500 </parameter>
+  <!--This is maximum allowed cluster noise.
+One floating number for each detector. Write a negative number to disable the cut-->
+  <parameter name="MaxClusterNoise" type="FloatVec"> -1 -1 -1 -1 -1 -1   -1 -1 -1</parameter>
+  <!--This is the maximum allowed number of cluster per plane.
+ One integer number for each detector. Write a negative number to disable the cut-->
+  <parameter name="MaxClusterPerPlane" type="IntVec"> -1 -1 -1 -1 -1 -1   -1 -1 -1</parameter>
+  <!--This is the minimum required number of cluster per plane.
+One integer number for each detector. Write 0 to disable the cut-->
+  <parameter name="MinClusterPerPlane" type="IntVec"> 0 0 0 0 0 0   1 0 0 </parameter>
+  <!--This is the minimum allow total cluster SNR
+One floating number for each detector. Write 0 to disable the cut-->
+  <parameter name="MinTotalClusterSNR" type="FloatVec"> 0 0 0 0 0 0  0 0 0 </parameter>
+  <!--This is the name of the noise collection.
+The presence of this collection in the event is allowing all the noise based selection cuts-->
+  <!--parameter name="NoiseCollectionName" type="string" value="noiseDB"/-->
+  <!--Define here ROI's. The first number (integer) is the detector ID.
+The other four float are xBotLeft  yBotLeft xTopRight yTopRight.
+To disable it, just put a negative number as detector ID.-->
+  <parameter name="OutsideRegion" type="FloatVec"> -1 10 10 40 40 </parameter>
+  <!--Setting this to true will select only events having the same number 
+of hits for each plane.-->
+  <parameter name="SameNumberOfHits" type="bool" value="false"/>
+  <!--This is the minimum allowed charge that the seed pixel of a cluster has to have.
+One floating number for each detector-->
+  <parameter name="SeedMinCharge" type="FloatVec"> 0 0 0 0 0 0 0 0 0</parameter>
+  <!--This is the minimum allowed SNR that the seed pixel of a cluster has to have.
+One floating number for each detector. Set to 0 to disable-->
+  <parameter name="SeedMinSNR" type="FloatVec"> 0 0 0 0 0 0   0 0 0</parameter>
+  <!--If true, a SkipEventException is thrown if after selection
+there are no cluster left.-->
+  <parameter name="SkipEmptyEvent" type="bool" value="true"/>
+  <!--This is the name of the status collection.
+The presence of this collection in the event is allowing all the noise based selection cuts-->
+  <!--parameter name="StatusCollectionName" type="string" value="statusDB"/-->
 </processor>
 
 <processor name="PreAligner" type="EUTelPreAlign">
@@ -212,7 +271,8 @@ NxMPixel: using a subframe of the cluster N x M pixels wide (set NxMPixel too).-
  <!--EUTelCorrelator fills histograms with correlation plots-->
   <!--Hit collection name-->
   <parameter name="InputHitCollectionName" type="string" lcioInType="TrackerHit"> hit </parameter>
-  <parameter name="Events" type="int" value="1000000"/>
+  <!-- -->
+  <parameter name="Events" type="int" value="50000"/>
   <parameter name="DumpOffset" type="bool" > false </parameter>
 </processor>
 
