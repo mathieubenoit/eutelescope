@@ -114,5 +114,5 @@ for job in batch :
     os.system("cd ~/batch/launch")
     run = GetRunNumber(job)
     log = "%s/Run%06i"%(log_folder,run)
-    os.system("mkdir %s"%log)
-    os.system("bsub -o %s/STDOUT -q %s %s"%(log,queue,job))
+    #os.system("mkdir %s"%log)
+    #os.system("bsub -o %s/STDOUT -q %s %s"%(log,queue,job))
