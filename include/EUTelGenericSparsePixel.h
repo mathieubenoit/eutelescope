@@ -27,11 +27,11 @@ class EUTelGenericSparsePixel : public EUTelBaseSparsePixel  {
 
 public:
     //! Default constructor with all arguments
-    EUTelGenericSparsePixel(short xCoord, short yCoord, short signal, short time); 
+    EUTelGenericSparsePixel(short xCoord, short yCoord, float signal, short time); 
 
     //! Default constructor with time argument omitted
     /*! Time will be set to zero */
-    EUTelGenericSparsePixel(short xCoord, short yCoord, short signal); 
+    EUTelGenericSparsePixel(short xCoord, short yCoord, float signal); 
 
     //! Default constructor with no args
     /*! Every value will be set to zero */
@@ -71,7 +71,7 @@ public:
     void setYCoord(short yCoord) { _yCoord = yCoord ; }
 
     //! Setter for the signal
-    void setSignal(short signal) { _signal = signal ; }
+    void setSignal(float signal) { _signal = signal ; }
 
     //! Setter for the time
     void setTime(short time) { _time = time ; }
@@ -101,6 +101,7 @@ protected:
 
 	//! The time
     unsigned short _time;
+
 
 };
 
