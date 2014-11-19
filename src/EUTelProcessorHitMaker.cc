@@ -440,7 +440,7 @@ void EUTelProcessorHitMaker::processEvent (LCEvent * event) {
       float xShift = 0.;
       float yShift = 0.;
 
-      cluster->getCenterOfGravityShift( xShift, yShift );
+      cluster->getCenterOfGravityShift( xShift, yShift ,2,2);
     
       double xCorrection = static_cast<double> (xShift) ;
       double yCorrection = static_cast<double> (yShift) ;
