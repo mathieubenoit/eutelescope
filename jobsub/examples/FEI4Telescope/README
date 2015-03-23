@@ -5,26 +5,28 @@ pysub-templates and have not been optimized.
 ******* PLEASE NOTE *******
 
 This directory contains an example configuration for the Datura
-telescope with six planes of Mimosa26 without DUT.
+telescope with six planes of FEI4 + DUT.
 
-This example is based on a test beam campaign done in May 2012 at DESY
-by the DESY CMS pixel group.
-
-The corresponding data can be found at:
-/afs/desy.de/group/telescopes/EutelTestData/TestExampleAnemone2FEI4
-
-If you are interested in the data but cannot access the above path,
-please contact the EUTelescope software coordinators.
 
 
 Features of this configuration:
 ------------------------------
 
-- telescope planes, 6 Mimosa26 sensors
-- 2 DUTs: type FEI4
+- telescope planes, 6 FEI4 sensors
+- 1 DUTs: type FEI4
 
 
-Known issues:
-------------
+
+Chain  : 
+
+no converter as usually files are coming from lcio 
+
+-clustering 
+-hitmaker
+-align 
+-fitter 
+
+Still not working optimally, but work in progress 
+
 
 
