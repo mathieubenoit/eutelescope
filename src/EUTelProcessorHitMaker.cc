@@ -361,7 +361,7 @@ void EUTelProcessorHitMaker::processEvent (LCEvent * event) {
 	
         TrackerDataImpl  * channelList  = dynamic_cast<TrackerDataImpl*> ( clusterFrame->getTrackerData() ); // list of pixels ?
 		
-        EUTelVirtualCluster * cluster   = new EUTelSparseClusterImpl< EUTelGenericSparsePixel > (static_cast<TrackerDataImpl *> ( channelList ));
+        EUTelVirtualCluster * cluster   = new EUTelDFFClusterImpl(static_cast<TrackerDataImpl *> ( channelList ));
 
       // there could be several clusters belonging to the same
       // detector. So update the geometry information only if this new
@@ -454,6 +454,8 @@ void EUTelProcessorHitMaker::processEvent (LCEvent * event) {
       cluster->getCenterOfGravity(xCoG, yCoG);
       xDet = (xCoG + 0.5) * xPitch;
       yDet = (yCoG + 0.5) * yPitch; 
+      
+
 
       streamlog_out(DEBUG1) << "cluster[" << setw(4) << iCluster << "] on sensor[" << setw(3) << sensorID 
                             << "] at [" << setw(8) << setprecision(3) << xCoG << ":" << setw(8) << setprecision(3) << yCoG << "]"
@@ -487,7 +489,9 @@ void EUTelProcessorHitMaker::processEvent (LCEvent * event) {
       telPos[0] = xDet - xSize/2. ;
       telPos[1] = yDet - ySize/2. ; 
       telPos[2] =   0.;
+      
 
+      
       if ( !_wantLocalCoordinates ) {
             // 
             // NOW !!
@@ -505,7 +509,7 @@ void EUTelProcessorHitMaker::processEvent (LCEvent * event) {
         AIDA::IHistogram2D * histo2D = dynamic_cast<AIDA::IHistogram2D*> (_aidaHistoMap[ tempHistoName ] );
         if ( histo2D )
         {
-            histo2D->fill( telPos[0], telPos[1] );
+            histo2D->fill( telPos[0], telPos[1]);
         }
         else 
         {
