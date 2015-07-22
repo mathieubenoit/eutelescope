@@ -1265,6 +1265,18 @@ void EUTelClusteringProcessor::digitalFixedFrameClustering(LCEvent * evt, LCColl
 
                         // the final result of the clustering will enter in a
                         // TrackerPulseImpl in order to be algorithm independent
+			
+			
+			bool goodData = true;
+			if(seedY>4095){
+				goodData = false;
+				seedY=0;
+			
+			}
+			if(seedX>4095){
+				goodData=false;
+				seedX=0;
+			}
 
                         TrackerPulseImpl * pulse = new TrackerPulseImpl;
                         CellIDEncoder<TrackerPulseImpl> idPulseEncoder(EUTELESCOPE::PULSEDEFAULTENCODING, pulseCollection);
@@ -1286,7 +1298,7 @@ void EUTelClusteringProcessor::digitalFixedFrameClustering(LCEvent * evt, LCColl
                         idClusterEncoder["quality"]       = static_cast<int>(cluQuality);
                         idClusterEncoder.setCellID(cluster);
 
-                        streamlog_out (DEBUG0) << "  Cluster no " <<  clusterID << " seedX " << seedX << " seedY " << seedY << endl;
+                        //streamlog_out (MESSAGE4) << "  Cluster no " <<  clusterID << " seedX " << idClusterEncoder["xSeed"] << " seedY " << idClusterEncoder["ySeed"]  << endl;
 /*
                         IntVec::iterator indexIter = clusterCandidateIndeces.begin();
                         while ( indexIter != clusterCandidateIndeces.end() ) 
@@ -1304,7 +1316,9 @@ void EUTelClusteringProcessor::digitalFixedFrameClustering(LCEvent * evt, LCColl
                         }
 */
 
-                        // copy the candidate charges inside the cluster
+                       if(goodData==true){
+		       
+		        // copy the candidate charges inside the cluster
                         cluster->setChargeValues(clusterCandidateCharges);
                         sparseClusterCollectionVec->push_back(cluster);
 
@@ -1333,7 +1347,8 @@ void EUTelClusteringProcessor::digitalFixedFrameClustering(LCEvent * evt, LCColl
                                 << " on detector " << _sensorID
                                 << " contains more than " << MAXCLUSTERSIZE << " cluster (" << clusterID + limitExceed << ")" << endl;
                             
-                        } 
+                        }
+			} 
                     }
                 }
             }
@@ -2157,6 +2172,8 @@ void EUTelClusteringProcessor::sparseClustering(LCEvent* evt, LCCollectionVec* p
 
 			std::vector<EUTelGenericSparsePixel> newlyAdded;
 			//We now cluster those hits together
+			
+			
 			while( !hitPixelVec.empty() )
 			{
 				// prepare a TrackerData to store the cluster candidate
@@ -2176,14 +2193,20 @@ void EUTelClusteringProcessor::sparseClustering(LCEvent* evt, LCCollectionVec* p
 
 				//Now process all newly added pixels, initially this is the just previously added one
 				//but in the process of neighbour finding we continue to add new pixels
+				
+				
 				while( !newlyAdded.empty() )
 				{
 					bool newlyDone = true;
 					int  x1, x2, y1, y2, dX, dY;
 
 					//check against all pixels in the hitPixelVec
+
 					for( std::vector<EUTelGenericSparsePixel>::iterator hitVec = hitPixelVec.begin(); hitVec != hitPixelVec.end(); ++hitVec )
 					{
+					
+													
+					
 						//get the relevant infos from the newly added pixel
 						x1 = newlyAdded.front().getXCoord();
 						y1 = newlyAdded.front().getYCoord();
@@ -2242,6 +2265,8 @@ void EUTelClusteringProcessor::sparseClustering(LCEvent* evt, LCCollectionVec* p
 				}
 
 				sparseCluster->setNoiseValues( noiseValueVec );
+				
+				
 
 				//Now we need to process the found cluster
 				if ( (sparseCluster->size() > 0) && (sparseCluster->getSeedSNR() >= _sparseSeedCut) && (sparseCluster->getClusterSNR() >= _sparseClusterCut) )
